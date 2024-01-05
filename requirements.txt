@@ -1,0 +1,5 @@
+torch~=2.1.0
+espnet~=202310
+numpy==1.23.5
+scipy==1.10.1
+fastapi==0.92.0

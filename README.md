@@ -85,7 +85,7 @@ ISSAI appreciates and requires attribution. An attribution should include the ti
 
 ## Speech synthesis
 
-You can synthesize an arbitrary text using `synthesize.py` script. Modify the following lines in the script:
+You can synthesize an arbitrary text using `kazakh_tts_service.py` script. Modify the following lines in the script:
 ```
 ## specify the path to vocoder's checkpoint, i.e
 vocoder_checkpoint="exp/vocoder/checkpoint-400000steps.pkl"
@@ -95,11 +95,8 @@ config_file = "exp/tts_train_raw_char/config.yaml"
 model_path = "exp/tts_train_raw_char/train.loss.ave_5best.pth"
 ```
 
-Now you can run the script using an arbitrary text, for example:
-```
-python synthesize.py --text "бүгінде өңірде тағы бес жобаның құрылысы жүргізілуде."
-```
-The generated file will be saved in `tts1/synthesized_wavs` folder.
+Now you can run the WEB API server with command  `uvicorn main:app --reload` \
+The api will be available at endpoint `/api/text2speach?text=Сәлеметсіз бе`
 
 ## Citation
 ```
