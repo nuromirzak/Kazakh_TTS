@@ -21,6 +21,8 @@ RUN apt-get install -y unzip
 
 RUN bash /app/espnet/tools/installers/install_parallel-wavegan.sh
 
+ARG CACHEBUST=1
+
 RUN git clone https://github.com/nuromirzak/Kazakh_TTS.git /app/espnet/egs2/Kazakh_TTS
 
 WORKDIR /app/espnet/egs2/Kazakh_TTS
@@ -38,11 +40,6 @@ RUN mkdir -p /app/espnet/egs2/Kazakh_TTS/tts1/exp
 RUN mv /app/kaztts_male1_tacotron2_train.loss.ave/exp/tts_stats_raw_char /app/espnet/egs2/Kazakh_TTS/tts1/exp/
 RUN mv /app/kaztts_male1_tacotron2_train.loss.ave/exp/tts_train_raw_char /app/espnet/egs2/Kazakh_TTS/tts1/exp/
 RUN mv /app/parallelwavegan_male1_checkpoint/ /app/espnet/egs2/Kazakh_TTS/tts1/exp/vocoder
-
-RUN echo "source /app/espnet/tools/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
-ENV PATH /app/espnet/tools/miniconda/envs/espnet/bin:$PATH
-
-RUN #uvicorn main:app
 
 EXPOSE 8000
 
