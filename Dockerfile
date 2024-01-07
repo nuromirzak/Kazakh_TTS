@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+ARG COMMIT_HASH=1b5622c676ed7eccb20d1f825dd0f9a16e8e5064
 RUN git clone https://github.com/espnet/espnet
 
 RUN apt-get update && apt-get install -y wget
@@ -42,4 +43,9 @@ RUN mv /app/parallelwavegan_male1_checkpoint/ /app/espnet/egs2/Kazakh_TTS/tts1/e
 EXPOSE 8000
 
 WORKDIR /app/espnet/egs2/Kazakh_TTS
-ENTRYPOINT ["/app/espnet/tools/miniconda/bin/conda", "run", "-n", "espnet", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+COPY start.sh /start.sh
+
+RUN chmod +x /start.sh
+
+ENTRYPOINT ["/start.sh"]

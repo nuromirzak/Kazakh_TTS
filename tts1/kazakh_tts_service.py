@@ -36,7 +36,7 @@ class KazakhTtsService:
         )
         self.text2speech.spc2wav = None  # Disable griffin-lim
 
-    def text2speach_bytes(self, text: str) -> bytes:
+    def text2speech_bytes(self, text: str) -> bytes:
         with torch.no_grad():
             output_dict = self.text2speech(text.lower())
             feat_gen = output_dict['feat_gen']

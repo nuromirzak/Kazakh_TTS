@@ -1,0 +1,5 @@
+docker build --build-arg COMMIT_HASH=$(git rev-parse HEAD) -t registry.heroku.com/"here should be app name"/web:latest .
+docker run -p 9000:8000 registry.heroku.com/kz-tts-app/web:latest
+docker push registry.heroku.com/"here should be app name"/web:latest
+heroku container:release web -a "here should be app name"
+heroku logs --app="here should be app name" --tail
