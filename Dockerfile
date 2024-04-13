@@ -25,7 +25,7 @@ RUN make
 
 RUN /app/espnet/tools/miniconda/bin/conda run -n espnet /bin/bash /app/espnet/tools/installers/install_parallel-wavegan.sh
 
-ARG COMMIT_HASH=d1fcd00
+ARG COMMIT_HASH=caching
 RUN git clone https://github.com/nuromirzak/Kazakh_TTS.git /app/espnet/egs2/Kazakh_TTS
 
 WORKDIR /app/espnet/egs2/Kazakh_TTS
