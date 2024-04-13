@@ -29,7 +29,7 @@ model_path = "exp/tts_train_raw_char/train.loss.ave_5best.pth"
 text2speech = Text2Speech(
     config_file,
     model_path,
-    device="cpu",
+    device="cuda",
     # Only for Tacotron 2
     threshold=0.5,
     minlenratio=0.0,
