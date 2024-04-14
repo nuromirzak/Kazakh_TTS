@@ -32,6 +32,8 @@ def shutdown_event():
 
 @app.get("/api/text2speech", response_class=Response, response_model=bytes)
 async def text2speech(text: str):
+    if len(text) > 250:
+        raise HTTPException(status_code=400, detail="Text length should be less than 250 characters")
     cursor.execute("SELECT audio FROM audio_cache WHERE text = ?", (text,))
     row = cursor.fetchone()
 
