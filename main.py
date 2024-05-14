@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from tts1.kazakh_tts_service import KazakhTtsService
 import sqlite3
@@ -32,18 +32,23 @@ def shutdown_event():
 
 @app.get("/api/text2speech", response_class=Response, response_model=bytes)
 async def text2speech(text: str):
+    print(f"Received text: {text}")
     if len(text) > 250:
         raise HTTPException(status_code=400, detail="Text length should be less than 250 characters")
     cursor.execute("SELECT audio FROM audio_cache WHERE text = ?", (text,))
     row = cursor.fetchone()
 
     if row:
+        print("Audio found in cache")
         wav_bytes = row[0]
     else:
+        print("Audio not found in cache")
         # Generate the audio since it's not cached
         try:
             wav_bytes = KazakhTtsService().text2speech_bytes(text)
+            print("Audio generated")
         except Exception as e:
+            print("Error generating audio:", e)
             raise HTTPException(status_code=500, detail=str(e))
 
         # Store the generated audio in the database

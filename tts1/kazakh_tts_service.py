@@ -20,10 +20,13 @@ model_path = "exp/tts_train_raw_char/train.loss.ave_5best.pth"
 
 class KazakhTtsService:
     def __init__(self):
+        cuda_available = torch.cuda.is_available()
+        print(f"CUDA available: {cuda_available}")
+
         self.text2speech = Text2Speech(
             config_file,
             model_path,
-            device="cpu",
+            device="cuda" if cuda_available else "cpu",
             # Only for Tacotron 2
             threshold=0.5,
             minlenratio=0.0,
@@ -37,10 +40,16 @@ class KazakhTtsService:
         self.text2speech.spc2wav = None  # Disable griffin-lim
 
     def text2speech_bytes(self, text: str) -> bytes:
+        print(f"Received text: {text}")
         with torch.no_grad():
             output_dict = self.text2speech(text.lower())
             feat_gen = output_dict['feat_gen']
             wav: torch.Tensor = vocoder.inference(feat_gen)
+
+        if wav.is_cuda:
+            print("The tensor is on CUDA")
+        else:
+            print("The tensor is on CPU")
 
         view = wav.view(-1)
         cpu_result = view.cpu()

@@ -1,6 +1,4 @@
-FROM ubuntu:jammy as base
-
-ENV DEBIAN_FRONTEND=noninteractive
+FROM nvidia/cuda:12.2.2-runtime-ubuntu22.04
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -12,10 +10,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-FROM base as builder
-
 RUN git clone --depth 1 https://github.com/espnet/espnet /app/espnet
 
 WORKDIR /app/espnet/tools
@@ -25,18 +19,10 @@ RUN make
 
 RUN /app/espnet/tools/miniconda/bin/conda run -n espnet /bin/bash /app/espnet/tools/installers/install_parallel-wavegan.sh
 
-ARG COMMIT_HASH=caching123
-RUN git clone https://github.com/nuromirzak/Kazakh_TTS.git /app/espnet/egs2/Kazakh_TTS
-
 WORKDIR /app/espnet/egs2/Kazakh_TTS
+COPY . /app/espnet/egs2/Kazakh_TTS
 RUN /app/espnet/tools/miniconda/bin/conda run -n espnet pip install -r requirements.txt
-
-FROM base
-
-COPY --from=builder /app /app
-
-WORKDIR /app/espnet/egs2/Kazakh_TTS
-
+RUN /app/espnet/tools/miniconda/bin/conda run -n espnet conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
 COPY parallelwavegan_male1_checkpoint.zip /app/
 COPY kaztts_male1_tacotron2_train.loss.ave.zip /app/
 
@@ -50,7 +36,4 @@ RUN unzip /app/parallelwavegan_male1_checkpoint.zip -d /app/parallelwavegan_male
 
 EXPOSE 8000
 
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-ENTRYPOINT ["/bin/bash", "./start.sh"]
+ENTRYPOINT ["bash", "/app/espnet/egs2/Kazakh_TTS/start.sh"]
